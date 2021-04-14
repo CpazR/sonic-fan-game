@@ -472,7 +472,7 @@ public class PlayerActions {
     }
 
     public static void doubleSpin(Player p) {
-        if (!p.ground && p.anim == JUMP_ANIM && !p.doubleSpinning) {
+        if (p.state != STATE_BOUNCING && !p.ground && p.anim == JUMP_ANIM && !p.doubleSpinning) {
             if (p.spaceBar && p.doubleSpinReady) {
                 p.state = STATE_SPINNING;
                 p.jumpingUp = false;
