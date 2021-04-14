@@ -1,28 +1,18 @@
 package player;
 
-import static functionholders.CollisionFunctions.*;
-import static java.lang.Math.*;
-
-import static player.PlayerConstants.*;
-import static player.PlayerSounds.*;
-
-import java.awt.Color;
-
 import badniks.Badnik;
 import datatypes.Shape;
 import datatypes.Vector;
-import objects.BlueSpring;
-import objects.DashPad;
-import objects.Helix;
-import objects.Item;
-import objects.Rail;
-import objects.Ramp;
-import objects.Ring;
-import objects.Rotor;
-import objects.Spring;
-import objects.SpringPole;
+import objects.*;
 import shapes.Circle;
 import shapes.Rectangle;
+
+import java.awt.*;
+
+import static functionholders.CollisionFunctions.checkCollision;
+import static java.lang.Math.*;
+import static player.PlayerConstants.*;
+import static player.PlayerSounds.*;
 
 public class PlayerObjectHandling {
 	public static void rings(Player p, Ring[] rings) {
@@ -115,7 +105,6 @@ public class PlayerObjectHandling {
 						p.jumpingUp = false;
 						p.stopCam = false;
 						p.bounceType = 0;
-						p.trickReadyReady = true;
 						p.state = STATE_BOUNCING;
 						
 						p.ps.playSound(SOUND_SPRING);
@@ -139,7 +128,6 @@ public class PlayerObjectHandling {
 						p.ground = false;
 						p.jumpingUp = false;
 						p.stopCam = false;
-						p.trickReadyReady = true;
 						p.state = STATE_RAMP_DASHING;
 						
 						p.ps.playSound(SOUND_BOOST);
@@ -183,7 +171,6 @@ public class PlayerObjectHandling {
 							p.ground = false;
 							p.jumpingUp = false;
 							p.trickReady = false;
-							p.trickReadyReady = false;
 							p.state = STATE_SWINGING;
 							
 							p.rotor = rotors[i];
@@ -290,7 +277,6 @@ public class PlayerObjectHandling {
 						
 						p.stopCam = false;
 						p.trickReady = false;
-						p.trickReadyReady = false;
 						p.state = STATE_SPRING_POLING;
 						if(p.anim != SPIN_ANIM) {p.anim = JUMP_ANIM;}
 						
@@ -392,7 +378,6 @@ public class PlayerObjectHandling {
 						p.jumpingUp = false;
 						p.bounceType = 0;
 						p.stopCam = false;
-						p.trickReadyReady = true;
 						p.state = STATE_BOUNCING;
 						
 						p.ps.playSound(SOUND_SPRING);
