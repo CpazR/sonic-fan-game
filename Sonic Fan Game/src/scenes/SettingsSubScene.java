@@ -1,20 +1,15 @@
 package scenes;
 
-import static java.lang.Math.*;
-import static org.lwjgl.glfw.GLFW.*;
-
-import javax.sound.sampled.Clip;
-
-import org.joml.Vector2f;
-
 import main.KeyListener;
 import main.Loader;
 import main.Window;
-import rendering.Camera;
-import rendering.Font;
-import rendering.Image;
-import rendering.Renderer;
-import rendering.Shader;
+import org.joml.Vector2f;
+import rendering.*;
+
+import javax.sound.sampled.Clip;
+
+import static java.lang.Math.pow;
+import static org.lwjgl.glfw.GLFW.*;
 
 public class SettingsSubScene extends Scene {
 	private final int SETTINGS_FADE_IN		= 0;
@@ -102,7 +97,12 @@ public class SettingsSubScene extends Scene {
 		r.draw(shader, camera);
 		r.reset();
 	}
-	
+
+	@Override
+	public void exit() {
+
+	}
+
 	private void stateSettingsFadeIn(float dt) {state = SETTINGS;}
 	
 	private void stateSettings(float dt) {

@@ -1,20 +1,16 @@
 package scenes;
 
-import static java.lang.Math.*;
-import static org.lwjgl.glfw.GLFW.*;
-
-import javax.sound.sampled.Clip;
-
-import org.joml.Vector2f;
-
 import main.KeyListener;
 import main.Loader;
 import main.Window;
-import rendering.Camera;
-import rendering.Font;
-import rendering.Image;
-import rendering.Renderer;
-import rendering.Shader;
+import org.joml.Vector2f;
+import rendering.*;
+
+import javax.sound.sampled.Clip;
+
+import static java.lang.Math.min;
+import static java.lang.Math.pow;
+import static org.lwjgl.glfw.GLFW.*;
 
 public class MenuScene extends Scene {
 	private final int FADING_OUT 			= -1;
@@ -174,7 +170,13 @@ public class MenuScene extends Scene {
 			r.reset();
 		}
 	}
-	
+
+	@Override
+	public void exit() {
+		titleMusic.stop();
+		sonicAdvance2.stop();
+	}
+
 	private void stateFadingOut(float dt) {
 		int screenWidth = Window.getWidth();
 		int screenHeight = Window.getHeight();
@@ -718,9 +720,6 @@ public class MenuScene extends Scene {
 		for(int f = 1; f < min(60.0f / (1.0f / dt), 5); f++) {
 			fadeTimer++;
 			if(fadeTimer >= 60) {
-				titleMusic.stop();
-				sonicAdvance2.stop();
-				
 				if(menuSelection == 0) {Window.changeScene(1);}
 				if(menuSelection == 2) {
 					fadeTimer = 120;

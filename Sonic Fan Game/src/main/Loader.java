@@ -96,6 +96,7 @@ public class Loader {
     public static ByteBuffer[] backflipAnim;
     public static ByteBuffer[] helixAnim;
     public static ByteBuffer[] grindAnim;
+    public static ByteBuffer[] stageFinishNormalAnim;
 
     public static ByteBuffer[] spindashDustAnim;
     public static ByteBuffer[] spindashChargeDustAnim;
@@ -291,6 +292,7 @@ public class Loader {
         backflipAnim = loadImages("/sonicsprites", "backFlip");
         helixAnim = loadImages("/sonicsprites", "helix");
         grindAnim = loadImages("/sonicsprites", "grind");
+        stageFinishNormalAnim = loadImages("/sonicsprites", "stageFinishNormal");
 
         spindashDustAnim = loadImages("/sonicsprites", "dust");
         spindashChargeDustAnim = loadImages("/sonicsprites", "chargeDust");

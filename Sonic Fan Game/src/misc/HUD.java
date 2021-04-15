@@ -1,12 +1,5 @@
 package misc;
 
-import static java.lang.Math.*;
-
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-
-import org.joml.Vector2f;
-
 import datatypes.Animation;
 import main.Loader;
 import main.Window;
@@ -14,7 +7,8 @@ import player.Player;
 import rendering.Camera;
 import rendering.Image;
 import rendering.Renderer;
-import rendering.Shader;
+
+import static java.lang.Math.*;
 
 public class HUD {
 	public static final int FPS_SAMPLE_SIZE = 10;
@@ -139,6 +133,10 @@ public class HUD {
 		drawNumber(Window.getWidth() / 2 - time.getWidth() * SCALE / 2 + 40 * SCALE, 3 * SCALE, ms % 100, 2, camera, r);
 		
 		drawNumber(Window.getWidth() - numbers[0].getWidth() * SCALE * 2 - 1 * SCALE, 3 * SCALE, fps, 2, camera, r);
+
+		// DEBUG INFORMATION:
+//		drawNumber((37) * SCALE, (27) * SCALE, (int) p.pos.x, 4, camera, r);
+//		drawNumber((37) * SCALE , (27 + 16) * SCALE, (int) p.pos.y, 4, camera, r);
 		
 		if(p.voice != 0) {
 			voice = p.voice;

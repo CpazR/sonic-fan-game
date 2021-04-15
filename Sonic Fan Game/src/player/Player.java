@@ -6,6 +6,7 @@ import datatypes.Shape;
 import datatypes.Vector;
 import main.KeyListener;
 import main.Loader;
+import main.Window;
 import objects.*;
 import rendering.Renderer;
 import shapes.Circle;
@@ -33,6 +34,7 @@ public class Player {
     public boolean shiftKey;
     public boolean controlKey;
     public boolean zKey;
+    public boolean endStageKey;
 
     // flags
     public boolean ground;
@@ -61,6 +63,7 @@ public class Player {
     public boolean slamReady;
     public boolean slamUp;
     public boolean justGrinded;
+    public boolean stageEnded;
 
     public int state;
 
@@ -124,6 +127,7 @@ public class Player {
     public Animation backflipAnim;
     public Animation helixAnim;
     public Animation grindAnim;
+    public Animation stageFinishNormalAnim;
 
     public Animation spindashDustAnim;
     public Animation spindashChargeDustAnim;
@@ -180,6 +184,7 @@ public class Player {
         backflipAnim = new Animation(Loader.backflipAnim, new int[]{7, 4, 3, 2, 2, 2, 2, 2, 3, 3, 3}, 8);
         helixAnim = new Animation(Loader.slideAnim, new int[]{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, 0);
         grindAnim = new Animation(Loader.grindAnim, new int[]{2, 2}, 0);
+        stageFinishNormalAnim = new Animation(Loader.stageFinishNormalAnim, new int[]{4, 4, 4, 4, 4, 4, 4, 12, 4, 4, 4}, 10);
 
         spindashDustAnim = new Animation(Loader.spindashDustAnim, new int[]{2, 2, 2, 2, 2, 2, 2, 2}, 0);
         spindashChargeDustAnim = new Animation(Loader.spindashChargeDustAnim, new int[]{2, 2, 2, 2, 2, 2, 2, 2}, 0);
@@ -199,6 +204,16 @@ public class Player {
     public void update(float dt, Shape[] layer0, Shape[] layer1, Shape[] layer2, Shape[] layer1Triggers, Shape[] layer2Triggers, Shape[] platforms, Ring[] rings, Spring[] springs, Badnik[] badniks, Item[] items, Ramp[] ramps, Rotor[] rotors, SpringPole[] springPoles, Helix[] helixes, DashPad[] dashPads, Rail[] rails, BlueSpring[] blueSprings) {
         checkKeys();
 
+        // TODO: hardcode for POC, implement goal positions into scene
+        // Checks if player is past goal and then if speed is below a threshold
+        if (pos.x > 37082) {
+            // player is past goal, check when stopped
+            if (abs(groundSpeed) < 3) {
+                stageEnded = true;
+                vel.x = 0;
+            }
+        }
+
         if (state == STATE_STARTING) {
             starting();
         }
@@ -206,7 +221,7 @@ public class Player {
             groundSpeed = getRotatedVectorComponents(vel, groundAxis).x;
             vel.translate(groundAxis.getPerpendicular().normalize().scale(groundSpeed));
 
-            if (!stopCam) {
+            if (!stopCam && !stageEnded) {
                 // actions
                 movement(this);
                 drag(this);
@@ -219,6 +234,11 @@ public class Player {
                 boost(this);
                 doubleSpin(this);
                 slide(this);
+            }
+
+            // TODO: update stage end conditions
+            if (stageEnded && groundSpeed == 0) {
+                endStage();
             }
 
             slam(this);
@@ -313,6 +333,20 @@ public class Player {
         blueSprings(this, blueSprings);
 
         afterImages(dt);
+    }
+
+    private void endStage() {
+        if (state != STATE_STAGE_END) {
+            state = STATE_STAGE_END;
+            anim = STAGE_FINISH_NORMAL_ANIM;
+            stageFinishNormalAnim.reset();
+            stageFinishNormalAnim.update(1);
+        }
+
+        if (stageFinishNormalAnim.finished) {
+            Window.getScene().exit();
+            Window.changeScene(0);
+        }
     }
 
     private void starting() {
@@ -720,6 +754,9 @@ public class Player {
         if (anim == GRIND_ANIM) {
             return (grindAnim);
         }
+        if (anim == STAGE_FINISH_NORMAL_ANIM) {
+            return (stageFinishNormalAnim);
+        }
 
         return (null);
     }
@@ -942,6 +979,13 @@ public class Player {
                     grindAnim.reset();
                 } else {
                     grindAnim.update(1);
+                }
+            } else if (state == STATE_STAGE_END) {
+                if (anim != STAGE_FINISH_NORMAL_ANIM) {
+                    anim = STAGE_FINISH_NORMAL_ANIM;
+                    stageFinishNormalAnim.reset();
+                } else {
+                    stageFinishNormalAnim.update(1);
                 }
             } else {
                 if (ground) {
@@ -1227,6 +1271,9 @@ public class Player {
             if (anim == GRIND_ANIM) {
                 grindAnim.draw((pos.x - w / 2) / 2 * Loader.scale, (pos.y - h / 2 - 32 + 3) / 2 * Loader.scale + 0, pos.x / 2 * Loader.scale, pos.y / 2 * Loader.scale, t, -facing * Loader.scale, Loader.scale, r);
             }
+            if (anim == STAGE_FINISH_NORMAL_ANIM) {
+                stageFinishNormalAnim.draw((pos.x - w / 2) / 2 * Loader.scale, (pos.y - h / 2 - 32 + 3) / 2 * Loader.scale + 0, pos.x / 2 * Loader.scale, pos.y / 2 * Loader.scale, t, -facing * Loader.scale, Loader.scale, r);
+            }
 
             if (anim == SWING_ANIM) {
                 swingAnim.draw((pos.x - w / 2 - 32 + 2) / 2 * Loader.scale, (pos.y - h / 2 - 32 - 1) / 2 * Loader.scale + 0, pos.x / 2 * Loader.scale, pos.y / 2 * Loader.scale, t, -facing * Loader.scale, Loader.scale, r);
@@ -1264,6 +1311,8 @@ public class Player {
         shiftKey = KeyListener.isKeyPressed(GLFW_KEY_LEFT_SHIFT);
         controlKey = KeyListener.isKeyPressed(GLFW_KEY_X);
         zKey = KeyListener.isKeyPressed(GLFW_KEY_Z);
+        // TODO: remove debug keys
+        endStageKey = KeyListener.isKeyPressed(GLFW_KEY_Y);
     }
 
     public Shape getRotatedCircle(Vector pos, double radius, double offsetX, double offsetY) {
